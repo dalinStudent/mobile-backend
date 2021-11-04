@@ -34,17 +34,17 @@ class DataBase
         return mysqli_real_escape_string($this->connect, stripslashes(htmlspecialchars($data)));
     }
 
-    function logIn($table, $username, $password)
+    function logIn($table, $email, $password)
     {
-        $username = $this->prepareData($username);
+        $email = $this->prepareData($email);
         $password = $this->prepareData($password);
-        $this->sql = "select * from " . $table . " where username = '" . $username . "'";
+        $this->sql = "select * from " . $table . " where email = '" . $email . "'";
         $result = mysqli_query($this->connect, $this->sql);
         $row = mysqli_fetch_assoc($result);
         if (mysqli_num_rows($result) != 0) {
-            $dbusername = $row['username'];
+            $dbemail = $row['email'];
             $dbpassword = $row['password'];
-            if ($dbusername == $username && password_verify($password, $dbpassword)) {
+            if ($dbemail == $email && password_verify($password, $dbpassword)) {
                 $login = true;
             } else $login = false;
         } else $login = false;
@@ -52,15 +52,18 @@ class DataBase
         return $login;
     }
 
-    function signUp($table, $fullname, $username, $password, $email)
+    function signUp($table, $firstName, $lastName, $password, $email, $address, $phone, $gender)
     {
-        $fullname = $this->prepareData($fullname);
-        $username = $this->prepareData($username);
+        $firstName = $this->prepareData($firstName);
+        $lastName = $this->prepareData($lastName);
         $password = $this->prepareData($password);
         $email = $this->prepareData($email);
+        $address = $this->prepareData($address);
+        $phone = $this->prepareData($phone);
+        $gender = $this->prepareData($gender);
         $password = password_hash($password, PASSWORD_DEFAULT);
         $this->sql =
-            "INSERT INTO " . $table . " (fullname, username, password, email) VALUES ('" . $fullname . "','" . $username . "','" . $password . "','" . $email . "')";
+            "INSERT INTO " . $table . " (first_name, last_name, password, email, address, phone, gender) VALUES ('" . $firstName . "','" . $lastName . "','" . $password . "','". $email . "','". $address . "','" . $phone . "','" . $gender . "')";
         if (mysqli_query($this->connect, $this->sql)) {
             return true;
         } else return false;
